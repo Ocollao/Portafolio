@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orlando Collao | Desarrollador Full Stack Junior</title>
+  <meta name="description" content="Portafolio de Orlando Collao Mercado, Desarrollador Full Stack Junior." />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-soft: rgba(255,255,255,0.05);
+      --card: rgba(15,23,42,0.75);
+      --border: rgba(255,255,255,0.10);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #22d3ee;
+      --accent-soft: rgba(34,211,238,0.12);
+      --accent-2: #a855f7;
+      --shadow: 0 20px 40px rgba(0,0,0,0.28);
+      --radius: 24px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(34,211,238,0.16), transparent 24%),
+        radial-gradient(circle at top left, rgba(168,85,247,0.12), transparent 20%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid rgba(34,211,238,0.30);
+      background: var(--accent-soft);
+      color: #c4f5ff;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 88px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.05;
+      margin: 18px 0 8px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2vw, 1.65rem);
+      color: #a5f3fc;
+      font-weight: 600;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-top: 22px;
+    }
+
+    .cta-row,
+    .contact-grid,
+    .chip-grid,
+    .stack-grid,
+    .experience-grid,
+    .project-grid,
+    .info-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 18px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      transition: .2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #38bdf8);
+      color: #082f49;
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      transform: translateY(-1px);
+    }
+
+    .contact-grid {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 28px;
+    }
+
+    .section {
+      padding: 56px 0;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin: 0 0 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .card.pad { padding: 28px; }
+
+    .info-grid {
+      grid-template-columns: 1.2fr .8fr;
+      align-items: start;
+    }
+
+    .muted { color: var(--muted); }
+
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+      color: #dbeafe;
+    }
+
+    .stack-grid {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .stack-group h3,
+    .project-side h3,
+    .experience-card h3,
+    .contact-box h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .list {
+      padding-left: 18px;
+      margin: 10px 0 0;
+      color: var(--muted);
+    }
+
+    .project-card {
+      background: linear-gradient(135deg, rgba(34,211,238,0.10), rgba(168,85,247,0.10));
+    }
+
+    .project-grid {
+      grid-template-columns: 1.2fr .8fr;
+      align-items: start;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .feature-item,
+    .point,
+    .contact-item {
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.18);
+    }
+
+    .experience-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .job-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .period {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+
+    .points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .footer-cta {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .small {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .accent { color: #a5f3fc; }
+
+    @media (max-width: 860px) {
+      .info-grid,
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 72px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <span class="badge">Disponible para oportunidades junior</span>
+      <h1>Orlando Collao Mercado</h1>
+      <h2>Desarrollador Full Stack Junior</h2>
+      <p>
+        Analista Programador Computacional titulado de Duoc UC, orientado al desarrollo de soluciones web,
+        construcción de funcionalidades, documentación técnica y pruebas funcionales. Busco integrarme a un equipo
+        donde pueda seguir creciendo y construir software confiable.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="mailto:orlandocollaom@gmail.com">Contáctame</a>
+        <a class="btn btn-secondary" href="https://www.linkedin.com/in/orlando-collao-mercado-797a232a7" target="_blank" rel="noopener noreferrer">Ver LinkedIn</a>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-item">📍 Villa Alemana, Chile</div>
+        <div class="contact-item">✉️ orlandocollaom@gmail.com</div>
+        <div class="contact-item">📱 +56 9 5785 1651</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container info-grid">
+        <article class="card pad">
+          <h2 class="section-title">Sobre mí</h2>
+          <p class="muted">
+            Me enfoco en el desarrollo full stack con interés en frontend y backend, trabajando con tecnologías como
+            Angular, TypeScript, NestJS, Python y bases de datos relacionales y no relacionales. También he participado
+            en documentación técnica, pruebas funcionales y validación de requerimientos, lo que me da una visión
+            práctica de calidad y mejora continua dentro del ciclo de desarrollo.
+          </p>
+          <div class="chip-grid">
+            <span class="chip">Desarrollo Full Stack</span>
+            <span class="chip">Pruebas funcionales</span>
+            <span class="chip">Documentación técnica</span>
+            <span class="chip">Análisis de requerimientos</span>
+            <span class="chip">Modelado de datos</span>
+            <span class="chip">Trabajo en equipo</span>
+          </div>
+        </article>
+
+        <aside class="card pad">
+          <h2 class="section-title">Formación</h2>
+          <h3>Duoc UC, Sede Viña del Mar</h3>
+          <p class="muted">Analista Programador Computacional</p>
+          <p class="small">2018 – 2023</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Stack técnico</h2>
+        <div class="stack-grid">
+          <div class="card pad stack-group">
+            <h3 class="accent">Frontend</h3>
+            <div class="chip-grid">
+              <span class="chip">Angular</span>
+              <span class="chip">JavaScript</span>
+              <span class="chip">TypeScript</span>
+              <span class="chip">Tailwind CSS</span>
+              <span class="chip">Bootstrap</span>
+            </div>
+          </div>
+          <div class="card pad stack-group">
+            <h3 class="accent">Backend</h3>
+            <div class="chip-grid">
+              <span class="chip">NestJS</span>
+              <span class="chip">Python</span>
+            </div>
+          </div>
+          <div class="card pad stack-group">
+            <h3 class="accent">Bases de datos</h3>
+            <div class="chip-grid">
+              <span class="chip">PostgreSQL</span>
+              <span class="chip">SQL Server</span>
+              <span class="chip">MongoDB</span>
+              <span class="chip">Oracle</span>
+            </div>
+          </div>
+          <div class="card pad stack-group">
+            <h3 class="accent">Herramientas</h3>
+            <div class="chip-grid">
+              <span class="chip">Git</span>
+              <span class="chip">Docker</span>
+              <span class="chip">TypeORM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Proyecto destacado</h2>
+        <article class="card pad project-card">
+          <div class="project-grid">
+            <div>
+              <p class="small accent">URBALIAPP</p>
+              <h3 style="font-size: 2rem; margin: 6px 0 0;">Aplicación web y móvil para gestión de condominios</h3>
+              <p class="muted">
+                Solución pensada para facilitar la administración de condominios mediante una plataforma digital para
+                residentes y administradores.
+              </p>
+              <div class="feature-list">
+                <div class="feature-item">Gestión de pagos</div>
+                <div class="feature-item">Reportes de mantenimiento</div>
+                <div class="feature-item">Comunicación entre residentes y administración</div>
+                <div class="feature-item">Notificaciones en tiempo real</div>
+              </div>
+            </div>
+            <div class="project-side card pad" style="background: rgba(0,0,0,0.18); box-shadow: none;">
+              <h3>Tecnologías utilizadas</h3>
+              <div class="chip-grid">
+                <span class="chip">Angular</span>
+                <span class="chip">NestJS</span>
+                <span class="chip">TypeORM</span>
+                <span class="chip">PostgreSQL</span>
+                <span class="chip">Docker</span>
+              </div>
+              <h3 style="margin-top: 24px;">Mi aporte</h3>
+              <ul class="list">
+                <li>Desarrollo de estructura full stack</li>
+                <li>Organización de datos y lógica de aplicación</li>
+                <li>Enfoque en experiencia de usuario y mejora de procesos</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Experiencia relevante</h2>
+        <div class="experience-grid">
+          <article class="card pad experience-card">
+            <div class="job-head">
+              <div>
+                <h3>Programador Full Stack</h3>
+                <p class="accent" style="margin: 4px 0 0;">MacroActiva SPA</p>
+              </div>
+              <span class="period">Ago 2023 – Ene 2024</span>
+            </div>
+            <p class="muted">
+              Participación en el desarrollo de soluciones web para una clínica privada, apoyando la construcción y
+              mejora de funcionalidades, documentación técnica y pruebas funcionales.
+            </p>
+            <div class="points-grid">
+              <div class="point">Desarrollo con JavaScript, Python y SQL Server</div>
+              <div class="point">Soporte y mejora de funcionalidades del sistema</div>
+              <div class="point">Documentación técnica y trazabilidad de procesos</div>
+              <div class="point">Pruebas funcionales y validación de requerimientos</div>
+            </div>
+          </article>
+
+          <article class="card pad experience-card" style="margin-top: 16px;">
+            <div class="job-head">
+              <div>
+                <h3>Operador de Sala</h3>
+                <p class="accent" style="margin: 4px 0 0;">Brink’s Chile</p>
+              </div>
+              <span class="period">Ago 2024 – Sep 2025</span>
+            </div>
+            <p class="muted">
+              Experiencia en procesos críticos de control, validación y trazabilidad, fortaleciendo competencias
+              transferibles al área TI.
+            </p>
+            <div class="points-grid">
+              <div class="point">Atención al detalle y validación de información</div>
+              <div class="point">Trabajo bajo presión y cumplimiento de procesos</div>
+              <div class="point">Orden, control y trazabilidad operativa</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="card pad footer-cta contact-box">
+          <div>
+            <h2 class="section-title" style="margin-bottom: 8px;">¿Trabajamos juntos?</h2>
+            <p class="muted" style="max-width: 760px; margin: 0;">
+              Estoy buscando una oportunidad como Desarrollador Full Stack Junior, Frontend Junior o Backend Junior.
+              Me interesa seguir creciendo en proyectos reales y aportar con compromiso, orden y aprendizaje rápido.
+            </p>
+          </div>
+          <div class="cta-row" style="margin-top: 0;">
+            <a class="btn btn-primary" href="mailto:orlandocollaom@gmail.com">Escribirme</a>
+            <a class="btn btn-secondary" href="https://www.linkedin.com/in/orlando-collao-mercado-797a232a7" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
