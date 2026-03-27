@@ -317,28 +317,6 @@
 
     .gallery-item:hover img { transform: scale(1.04); }
 
-    .gallery-item .del-btn {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: rgba(220,38,38,0.85);
-      border: none;
-      color: #fff;
-      font-size: 14px;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity .2s;
-    }
-
-    .gallery-item:hover .del-btn { opacity: 1; }
-
     .gallery-empty {
       grid-column: 1/-1;
       padding: 28px;
@@ -348,65 +326,6 @@
       border: 2px dashed rgba(255,255,255,0.08);
       border-radius: 14px;
     }
-
-    .upload-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 14px;
-      background: rgba(34,197,94,0.12);
-      border: 1px solid rgba(34,197,94,0.30);
-      color: #86efac;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .upload-btn:hover {
-      background: rgba(34,197,94,0.20);
-      transform: translateY(-1px);
-    }
-
-    .clear-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.20);
-      color: #fca5a5;
-      font-size: 13px;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .clear-btn:hover { background: rgba(239,68,68,0.16); }
-
-    /* Controles de edición ocultos por defecto — visibles solo en modo dueño */
-    .owner-only { display: none !important; }
-    body.owner-mode .owner-only { display: inline-flex !important; }
-
-    /* Indicador de modo dueño */
-    #owner-badge {
-      display: none;
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      padding: 8px 14px;
-      background: rgba(34,197,94,0.15);
-      border: 1px solid rgba(34,197,94,0.35);
-      border-radius: 999px;
-      color: #86efac;
-      font-size: 12px;
-      font-weight: 600;
-      z-index: 999;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-    }
-    body.owner-mode #owner-badge { display: flex; align-items: center; gap: 6px; }
 
     /* Lightbox */
     #lightbox {
@@ -459,12 +378,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Badge modo dueño -->
-  <div id="owner-badge" onclick="desactivarModo()" title="Click para salir del modo edición">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    Modo edición — Click para salir
-  </div>
 
   <!-- Lightbox -->
   <div id="lightbox">
@@ -625,24 +538,8 @@
 
           <!-- Galería de capturas -->
           <div class="gallery-section">
-            <div class="gallery-header">
-              <h4>Capturas del sistema</h4>
-              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                <button class="clear-btn owner-only" onclick="limpiarGaleria('pos')" id="clear-pos">
-                  ✕ Limpiar todo
-                </button>
-                <label class="upload-btn owner-only" for="upload-pos">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  Subir capturas
-                </label>
-                <input type="file" id="upload-pos" accept="image/*" multiple style="display:none;" onchange="subirImagenes('pos', this)" />
-              </div>
-            </div>
-            <div class="gallery-grid" id="gallery-pos">
-              <div class="gallery-empty" id="empty-pos">
-                Sin capturas aún — sube imágenes del sistema para mostrarlas aquí.
-              </div>
-            </div>
+            <h4 class="gallery-header">Capturas del sistema</h4>
+            <div class="gallery-grid" id="gallery-pos"></div>
           </div>
         </article>
 
@@ -683,24 +580,8 @@
 
           <!-- Galería de capturas -->
           <div class="gallery-section">
-            <div class="gallery-header">
-              <h4>Capturas del sistema</h4>
-              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                <button class="clear-btn owner-only" onclick="limpiarGaleria('urbali')" id="clear-urbali">
-                  ✕ Limpiar todo
-                </button>
-                <label class="upload-btn owner-only" for="upload-urbali">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  Subir capturas
-                </label>
-                <input type="file" id="upload-urbali" accept="image/*" multiple style="display:none;" onchange="subirImagenes('urbali', this)" />
-              </div>
-            </div>
-            <div class="gallery-grid" id="gallery-urbali">
-              <div class="gallery-empty" id="empty-urbali">
-                Sin capturas aún — sube imágenes del sistema para mostrarlas aquí.
-              </div>
-            </div>
+            <h4 class="gallery-header">Capturas del sistema</h4>
+            <div class="gallery-grid" id="gallery-urbali"></div>
           </div>
         </article>
       </div>
@@ -772,200 +653,37 @@
   </main>
 
   <script>
-    // ── Configuración GitHub ──────────────────────────────────────────
     const GH_OWNER  = 'Ocollao';
     const GH_REPO   = 'Portafolio';
     const GH_BRANCH = 'main';
     const GH_BASE   = 'images';
 
-    // Estado en memoria — fuente de verdad viene de GitHub, no localStorage
-    const galeriaState = { pos: [], urbali: [] };
-
-    // ── Leer carpeta desde GitHub API (sin token — repo público) ──────
-    async function cargarDesdeGithub(proyecto) {
+    // Lee la carpeta images/{proyecto}/ del repo público — sin token
+    async function cargarGaleria(proyecto) {
       const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_BASE}/${proyecto}?ref=${GH_BRANCH}`;
       try {
         const res = await fetch(url);
-        if (res.status === 404) return []; // carpeta vacía o inexistente
-        if (!res.ok) throw new Error(`Error ${res.status}`);
+        if (!res.ok) return [];
         const files = await res.json();
         return files
           .filter(f => f.type === 'file' && /\.(png|jpe?g|gif|webp|svg)$/i.test(f.name))
           .sort((a, b) => a.name.localeCompare(b.name))
-          .map(f => ({ url: f.download_url, sha: f.sha, path: f.path }));
-      } catch (e) {
-        console.warn('No se pudo cargar galería:', e.message);
-        return [];
-      }
+          .map(f => f.download_url);
+      } catch { return []; }
     }
 
-    // ── Token (session — se borra al cerrar el navegador) ─────────────
-    function getToken() { return sessionStorage.getItem('gh_pat') || ''; }
-
-    async function pedirToken() {
-      let token = getToken();
-      if (!token) {
-        token = prompt(
-          'Ingresa tu GitHub Personal Access Token (PAT) para subir imágenes.\n\n' +
-          'Requisitos del token:\n' +
-          '  • Fine-grained token\n' +
-          '  • Repositorio: Ocollao/Portafolio\n' +
-          '  • Permiso: Contents → Read and write\n\n' +
-          'Se guarda solo en esta sesión del navegador.'
-        );
-        if (token) sessionStorage.setItem('gh_pat', token.trim());
-      }
-      return token ? token.trim() : null;
-    }
-
-    // ── Helpers API GitHub (requiere token — solo escritura) ──────────
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload  = e => resolve(e.target.result.split(',')[1]);
-        r.onerror = reject;
-        r.readAsDataURL(file);
-      });
-    }
-
-    async function apiGithub(path, method, body, token) {
-      const res = await fetch(
-        `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
-        {
-          method,
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: body ? JSON.stringify(body) : undefined,
-        }
-      );
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Error ${res.status}`);
-      }
-      return res.json();
-    }
-
-    async function uploadToGithub(proyecto, file, token) {
-      const ext      = file.name.split('.').pop().toLowerCase() || 'png';
-      const slug     = Math.random().toString(36).slice(2, 8);
-      const filename = `${Date.now()}_${slug}.${ext}`;
-      const path     = `${GH_BASE}/${proyecto}/${filename}`;
-      const data     = await apiGithub(path, 'PUT', {
-        message: `feat: add screenshot for ${proyecto}`,
-        content: await fileToBase64(file),
-        branch: GH_BRANCH,
-      }, token);
-      return { url: data.content.download_url, sha: data.content.sha, path: data.content.path };
-    }
-
-    async function deleteFromGithub(imgPath, sha, token) {
-      await apiGithub(imgPath, 'DELETE', {
-        message: 'chore: remove screenshot', sha, branch: GH_BRANCH,
-      }, token);
-    }
-
-    // ── Render galería ────────────────────────────────────────────────
-    function renderGaleria(proyecto, imagenes) {
-      const grid     = document.getElementById('gallery-' + proyecto);
-      const empty    = document.getElementById('empty-' + proyecto);
-      const clearBtn = document.getElementById('clear-' + proyecto);
-
-      galeriaState[proyecto] = imagenes;
-
-      if (!imagenes || imagenes.length === 0) {
-        grid.innerHTML = '';
-        grid.appendChild(empty);
-          return;
-      }
-
+    function renderGaleria(proyecto, urls) {
+      const grid = document.getElementById('gallery-' + proyecto);
       grid.innerHTML = '';
-      imagenes.forEach((img, idx) => {
+      urls.forEach((src, i) => {
         const item = document.createElement('div');
         item.className = 'gallery-item';
-        item.innerHTML = `
-          <img src="${img.url}" alt="Captura ${idx + 1}" loading="lazy"
-               onclick="openLightbox('${img.url}')" style="cursor:zoom-in;" />
-          <button class="del-btn" onclick="eliminarImagen('${proyecto}', ${idx})" title="Eliminar">✕</button>
-        `;
+        item.innerHTML = `<img src="${src}" alt="Captura ${i + 1}" loading="lazy"
+          onclick="openLightbox('${src}')" style="cursor:zoom-in;" />`;
         grid.appendChild(item);
       });
     }
 
-    // ── Subir imágenes ────────────────────────────────────────────────
-    async function subirImagenes(proyecto, input) {
-      const files = Array.from(input.files);
-      input.value = '';
-      if (!files.length) return;
-
-      const token = await pedirToken();
-      if (!token) return;
-
-      const label = document.querySelector(`label[for="upload-${proyecto}"]`);
-      const iconoSubir = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Subir capturas`;
-
-      label.innerHTML = `<span style="display:flex;align-items:center;gap:8px">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-             style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-        Subiendo ${files.length} imagen${files.length > 1 ? 'es' : ''}…</span>`;
-      label.style.opacity = '0.7';
-      label.style.pointerEvents = 'none';
-
-      const lista   = [...galeriaState[proyecto]];
-      const errores = [];
-
-      for (const file of files) {
-        try {
-          const result = await uploadToGithub(proyecto, file, token);
-          lista.push(result);
-          renderGaleria(proyecto, lista); // render parcial por cada imagen
-        } catch (e) {
-          errores.push(`${file.name}: ${e.message}`);
-          if (/401|403|bad credential/i.test(e.message)) sessionStorage.removeItem('gh_pat');
-        }
-      }
-
-      label.innerHTML = iconoSubir;
-      label.style.opacity = '';
-      label.style.pointerEvents = '';
-
-      if (errores.length) {
-        alert('No se pudieron subir algunos archivos:\n\n' + errores.join('\n') +
-          '\n\nVerifica que el token sea válido y tenga permiso Contents: write.');
-      }
-    }
-
-    // ── Eliminar una imagen ───────────────────────────────────────────
-    async function eliminarImagen(proyecto, idx) {
-      const img = galeriaState[proyecto][idx];
-      if (!img) return;
-
-      const token = await pedirToken();
-      if (!token) return;
-
-      try {
-        await deleteFromGithub(img.path, img.sha, token);
-        renderGaleria(proyecto, galeriaState[proyecto].filter((_, i) => i !== idx));
-      } catch (e) {
-        alert('No se pudo eliminar la imagen: ' + e.message);
-      }
-    }
-
-    // ── Limpiar galería completa ──────────────────────────────────────
-    async function limpiarGaleria(proyecto) {
-      const imagenes = galeriaState[proyecto];
-      if (!imagenes.length) return;
-      if (!confirm(`¿Eliminar las ${imagenes.length} capturas del repositorio?`)) return;
-
-      const token = await pedirToken();
-      if (!token) return;
-
-      for (const img of imagenes) {
-        try { await deleteFromGithub(img.path, img.sha, token); }
-        catch (e) { console.warn('No se eliminó', img.path, e.message); }
-      }
-      renderGaleria(proyecto, []);
-    }
-
-    // ── Lightbox ──────────────────────────────────────────────────────
     function openLightbox(src) {
       document.getElementById('lb-img').src = src;
       document.getElementById('lightbox').classList.add('open');
@@ -979,46 +697,9 @@
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-    // ── Spinner CSS ───────────────────────────────────────────────────
-    const style = document.createElement('style');
-    style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-    document.head.appendChild(style);
-
-    // ── Modo dueño (Ctrl + Shift + E) ────────────────────────────────
-    function activarModo() {
-      document.body.classList.add('owner-mode');
-      sessionStorage.setItem('owner_mode', '1');
-    }
-    function desactivarModo() {
-      document.body.classList.remove('owner-mode');
-      sessionStorage.removeItem('owner_mode');
-      sessionStorage.removeItem('gh_pat');
-    }
-
-    document.addEventListener('keydown', e => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'E') {
-        e.preventDefault();
-        if (document.body.classList.contains('owner-mode')) {
-          desactivarModo();
-        } else {
-          activarModo();
-        }
-      }
-      if (e.key === 'Escape') closeLightbox();
-    });
-
-    // Restaurar modo si la sesión sigue activa
-    if (sessionStorage.getItem('owner_mode')) activarModo();
-
-    // ── Render: ocultar/mostrar clear-btn según modo ──────────────────
-    // (ya controlado por CSS owner-mode, sobreescribir el display inline anterior)
-    const _renderOriginal = renderGaleria;
-
-    // ── Init — carga desde GitHub (funciona en modo incógnito) ────────
-    (async function init() {
+    (async function() {
       for (const p of ['pos', 'urbali']) {
-        const imagenes = await cargarDesdeGithub(p);
-        renderGaleria(p, imagenes);
+        renderGaleria(p, await cargarGaleria(p));
       }
     })();
   </script>
