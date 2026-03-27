@@ -747,18 +747,27 @@
     const GH_OWNER  = 'Ocollao';
     const GH_REPO   = 'Portafolio';
     const GH_BRANCH = 'main';
-    const GH_BASE   = 'images'; // carpeta dentro del repo
+    const GH_BASE   = 'images';
 
-    // Almacena {url, sha, path} por proyecto (NO la imagen en sí)
-    const STORAGE_KEY = 'portfolio_gallery_v2';
+    // Estado en memoria — fuente de verdad viene de GitHub, no localStorage
+    const galeriaState = { pos: [], urbali: [] };
 
-    // ── Estado local (solo metadatos) ─────────────────────────────────
-    function cargarEstado() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-      catch { return {}; }
-    }
-    function guardarEstado(e) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(e));
+    // ── Leer carpeta desde GitHub API (sin token — repo público) ──────
+    async function cargarDesdeGithub(proyecto) {
+      const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_BASE}/${proyecto}?ref=${GH_BRANCH}`;
+      try {
+        const res = await fetch(url);
+        if (res.status === 404) return []; // carpeta vacía o inexistente
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const files = await res.json();
+        return files
+          .filter(f => f.type === 'file' && /\.(png|jpe?g|gif|webp|svg)$/i.test(f.name))
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(f => ({ url: f.download_url, sha: f.sha, path: f.path }));
+      } catch (e) {
+        console.warn('No se pudo cargar galería:', e.message);
+        return [];
+      }
     }
 
     // ── Token (session — se borra al cerrar el navegador) ─────────────
@@ -780,7 +789,7 @@
       return token ? token.trim() : null;
     }
 
-    // ── API GitHub ────────────────────────────────────────────────────
+    // ── Helpers API GitHub (requiere token — solo escritura) ──────────
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -795,10 +804,7 @@
         `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,
         {
           method,
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: body ? JSON.stringify(body) : undefined,
         }
       );
@@ -809,33 +815,22 @@
       return res.json();
     }
 
-    // ── Subir imagen a GitHub ─────────────────────────────────────────
     async function uploadToGithub(proyecto, file, token) {
       const ext      = file.name.split('.').pop().toLowerCase() || 'png';
       const slug     = Math.random().toString(36).slice(2, 8);
       const filename = `${Date.now()}_${slug}.${ext}`;
       const path     = `${GH_BASE}/${proyecto}/${filename}`;
-      const content  = await fileToBase64(file);
-
-      const data = await apiGithub(path, 'PUT', {
+      const data     = await apiGithub(path, 'PUT', {
         message: `feat: add screenshot for ${proyecto}`,
-        content,
+        content: await fileToBase64(file),
         branch: GH_BRANCH,
       }, token);
-
-      return {
-        url:  data.content.download_url,
-        sha:  data.content.sha,
-        path: data.content.path,
-      };
+      return { url: data.content.download_url, sha: data.content.sha, path: data.content.path };
     }
 
-    // ── Eliminar imagen de GitHub ─────────────────────────────────────
     async function deleteFromGithub(imgPath, sha, token) {
       await apiGithub(imgPath, 'DELETE', {
-        message: 'chore: remove screenshot',
-        sha,
-        branch: GH_BRANCH,
+        message: 'chore: remove screenshot', sha, branch: GH_BRANCH,
       }, token);
     }
 
@@ -844,6 +839,8 @@
       const grid     = document.getElementById('gallery-' + proyecto);
       const empty    = document.getElementById('empty-' + proyecto);
       const clearBtn = document.getElementById('clear-' + proyecto);
+
+      galeriaState[proyecto] = imagenes;
 
       if (!imagenes || imagenes.length === 0) {
         grid.innerHTML = '';
@@ -866,7 +863,7 @@
       });
     }
 
-    // ── Subir (handler del input) ─────────────────────────────────────
+    // ── Subir imágenes ────────────────────────────────────────────────
     async function subirImagenes(proyecto, input) {
       const files = Array.from(input.files);
       input.value = '';
@@ -876,48 +873,42 @@
       if (!token) return;
 
       const label = document.querySelector(`label[for="upload-${proyecto}"]`);
+      const iconoSubir = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Subir capturas`;
+
       label.innerHTML = `<span style="display:flex;align-items:center;gap:8px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-             style="animation:spin 1s linear infinite">
-          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-        </svg>Subiendo ${files.length} imagen${files.length > 1 ? 'es' : ''}…</span>`;
+             style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+        Subiendo ${files.length} imagen${files.length > 1 ? 'es' : ''}…</span>`;
       label.style.opacity = '0.7';
       label.style.pointerEvents = 'none';
 
-      const estado    = cargarEstado();
-      const lista     = estado[proyecto] || [];
-      const errores   = [];
+      const lista   = [...galeriaState[proyecto]];
+      const errores = [];
 
       for (const file of files) {
         try {
           const result = await uploadToGithub(proyecto, file, token);
           lista.push(result);
-          // Render parcial (muestra cada imagen al subirse)
-          estado[proyecto] = lista;
-          guardarEstado(estado);
-          renderGaleria(proyecto, lista);
+          renderGaleria(proyecto, lista); // render parcial por cada imagen
         } catch (e) {
           errores.push(`${file.name}: ${e.message}`);
-          if (e.message.includes('401') || e.message.includes('403') || e.message.toLowerCase().includes('bad credential')) {
-            sessionStorage.removeItem('gh_pat');
-          }
+          if (/401|403|bad credential/i.test(e.message)) sessionStorage.removeItem('gh_pat');
         }
       }
 
-      label.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Subir capturas`;
+      label.innerHTML = iconoSubir;
       label.style.opacity = '';
       label.style.pointerEvents = '';
 
       if (errores.length) {
         alert('No se pudieron subir algunos archivos:\n\n' + errores.join('\n') +
-          '\n\nVerifica que el token sea válido y tenga permisos de escritura en Contents.');
+          '\n\nVerifica que el token sea válido y tenga permiso Contents: write.');
       }
     }
 
     // ── Eliminar una imagen ───────────────────────────────────────────
     async function eliminarImagen(proyecto, idx) {
-      const estado = cargarEstado();
-      const img    = (estado[proyecto] || [])[idx];
+      const img = galeriaState[proyecto][idx];
       if (!img) return;
 
       const token = await pedirToken();
@@ -925,9 +916,7 @@
 
       try {
         await deleteFromGithub(img.path, img.sha, token);
-        estado[proyecto] = (estado[proyecto] || []).filter((_, i) => i !== idx);
-        guardarEstado(estado);
-        renderGaleria(proyecto, estado[proyecto]);
+        renderGaleria(proyecto, galeriaState[proyecto].filter((_, i) => i !== idx));
       } catch (e) {
         alert('No se pudo eliminar la imagen: ' + e.message);
       }
@@ -935,10 +924,9 @@
 
     // ── Limpiar galería completa ──────────────────────────────────────
     async function limpiarGaleria(proyecto) {
-      const estado   = cargarEstado();
-      const imagenes = estado[proyecto] || [];
+      const imagenes = galeriaState[proyecto];
       if (!imagenes.length) return;
-      if (!confirm(`¿Eliminar las ${imagenes.length} capturas de este proyecto del repositorio?`)) return;
+      if (!confirm(`¿Eliminar las ${imagenes.length} capturas del repositorio?`)) return;
 
       const token = await pedirToken();
       if (!token) return;
@@ -947,9 +935,6 @@
         try { await deleteFromGithub(img.path, img.sha, token); }
         catch (e) { console.warn('No se eliminó', img.path, e.message); }
       }
-
-      delete estado[proyecto];
-      guardarEstado(estado);
       renderGaleria(proyecto, []);
     }
 
@@ -967,15 +952,17 @@
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-    // ── Animación spinner ─────────────────────────────────────────────
+    // ── Spinner CSS ───────────────────────────────────────────────────
     const style = document.createElement('style');
     style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
     document.head.appendChild(style);
 
-    // ── Init ──────────────────────────────────────────────────────────
-    (function init() {
-      const estado = cargarEstado();
-      ['pos', 'urbali'].forEach(p => renderGaleria(p, estado[p] || []));
+    // ── Init — carga desde GitHub (funciona en modo incógnito) ────────
+    (async function init() {
+      for (const p of ['pos', 'urbali']) {
+        const imagenes = await cargarDesdeGithub(p);
+        renderGaleria(p, imagenes);
+      }
     })();
   </script>
 </body>
